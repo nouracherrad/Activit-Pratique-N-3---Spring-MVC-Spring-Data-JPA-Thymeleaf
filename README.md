@@ -1,5 +1,5 @@
 # Activit-Pratique-N-3---Spring-MVC-Spring-Data-JPA-Thymeleaf
-###Gestion des Patients - Application Spring Boot
+## Gestion des Patients - Application Spring Boot
 
 ## Description du projet
 Ce projet est une application web de gestion des patients d'un hôpital développée en **Spring Boot** avec **Spring Data JPA**, **Thymeleaf** et **Bootstrap**. L'application permet de lister, rechercher et supprimer des patients.
@@ -142,7 +142,7 @@ public class HopitalApplication implements CommandLineRunner {
     </tbody>
 </table>
 ```
-### 6. ** la visualisation de la Template **
+### 6.**la visualisation de la Template**
 ![image](https://github.com/user-attachments/assets/714dea4d-d539-4b0e-adfa-72966f05ddbe)
 
 
