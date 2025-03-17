@@ -19,11 +19,23 @@ public class HopitalApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-  patientRepo.save(Patient.builder().name("P1").dateNaissance(new Date(2000, 1, 1)).score(10).malade(true).build());
-        patientRepo.save(Patient.builder().name("P2").dateNaissance(new Date(2000, 1, 1)).score(10).malade(true).build());
-        patientRepo.save(Patient.builder().name("P3").dateNaissance(new Date(2000, 1, 1)).score(10).malade(true).build());
-        patientRepo.save(Patient.builder().name("P4").dateNaissance(new Date(2000, 1, 1)).score(10).malade(true).build());
-        patientRepo.save(Patient.builder().name("P5").dateNaissance(new Date(2000, 1, 1)).score(10).malade(true).build());
+   Patient patient= new Patient();
+   patient.setId(null);
+   patient.setName("mohamed");
+   patient.setDateNaissance(new Date(2000,10,10));
+   patient.setMalade(true);
+   patient.setScore(80);
+   Patient patient1=new Patient();
+   patient1.setId(null);
+   patient1.setName("noura");
+   patient1.setDateNaissance(new Date(2000,10,10));
+   patient1.setMalade(true);
+   patient1.setScore(80);
+
+   patientRepo.save(patient);
+   patientRepo.save(patient1);
+
+
 
     }
 }
