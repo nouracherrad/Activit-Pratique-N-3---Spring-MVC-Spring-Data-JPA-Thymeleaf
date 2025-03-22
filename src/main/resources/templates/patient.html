@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="tamplate1">
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +10,8 @@
     <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
 </head>
 <body>
-<div>
+<div layout:fragment="content">
+<div  class="container mt-2">
 <div class="card">
     <div class="card-header">
         Liste des Patients
@@ -39,6 +42,9 @@
                 <td>
                     <a onclick="javascript:return confirm('etes vous sur de vouloir supprimer ?')" th:href="@{delete(id=${patient.id}, keyword=${keyword}, page=${currentPage})}" class="btn btn-danger">Delete</a>
                 </td>
+                <td>
+                    <a  th:href="@{editPatient(id=${patient.id}, keyword=${keyword}, page=${currentPage})}" class="btn btn-success">Edit</a>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -50,6 +56,6 @@
         </ul>
     </div>
 </div>
-</div>
+</div></div>
 </body>
 </html>
