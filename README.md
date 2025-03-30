@@ -220,13 +220,190 @@ La validation des formulaires est gérée par Spring Boot avec les annotations `
 ![image](https://github.com/user-attachments/assets/eb5b4d35-a776-4b53-8f0c-6f85344bf414)
 
 ---
+### 7.Configuration de la Sécurité avec Spring Security
 
-### 7. **Base de Données H2**
+1. Fichiers de Configuration
+
+securityConfig.java
+
+Ce fichier configure la sécurité de l'application en utilisant Spring Security.
+
+Encodeur de mot de passe : Utilisation de BCryptPasswordEncoder pour stocker les mots de passe de manière sécurisée.
+
+Gestion des utilisateurs : Trois utilisateurs sont définis en mémoire (deux avec le rôle USER et un avec ADMIN, USER).
+
+Gestion des autorisations :
+
+Accès libre aux ressources statiques (/webjars/**, H2).
+
+Authentification requise pour toutes les autres pages.
+
+Redirection vers une page d’accès refusé (/notAuthorized) si l'utilisateur n'a pas les autorisations nécessaires.
+
+package ma.enset.hopital.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class securityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
+        return new InMemoryUserDetailsManager(
+                User.withUsername("user1").password(passwordEncoder().encode("1234")).roles("USER").build(),
+                User.withUsername("user2").password(passwordEncoder().encode("1234")).roles("USER").build(),
+                User.withUsername("admin").password(passwordEncoder().encode("1234")).roles("ADMIN", "USER").build()
+        );
+    }
+    
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.formLogin(formLogin ->
+            formLogin.loginPage("/login")
+                     .loginProcessingUrl("/login")
+                     .defaultSuccessUrl("/user/index")
+                     .permitAll()
+        );
+        httpSecurity.rememberMe();
+        httpSecurity.authorizeRequests().requestMatchers("/webjars/**", "H2").permitAll();
+        httpSecurity.authorizeRequests().anyRequest().authenticated();
+        httpSecurity.exceptionHandling().accessDeniedPage("/notAuthorized");
+        return httpSecurity.build();
+    }
+}
+
+2. Interface de Connexion
+
+login.html
+
+Cette page HTML permet aux utilisateurs de se connecter.
+
+Champs : Nom d'utilisateur et mot de passe.
+
+Option "Remember me" : Permet de garder la session active.
+
+Bootstrap : Utilisation de la bibliothèque pour une interface responsive.
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentification</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<div class="row mt-3">
+    <div class="col-md-6 offset-3">
+        <div class="card">
+            <div class="card-header">Authentification</div>
+            <div class="card-body">
+                <form method="post" th:action="@{/login}">
+                    <div class="mb-3 mt-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" id="username" class="form-control">
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" id="password" class="form-control">
+                    </div>
+                    <div class="form-check mb-3">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="remember-me">
+                            Remember me
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+3. Gestion des Autorisations
+
+securityController.java
+
+Ce contrôleur gère les pages d'authentification et d'accès refusé.
+
+/login : Redirige vers la page de connexion.
+
+/notAuthorized : Page affichée en cas de refus d'accès.
+
+package ma.enset.hopital.Web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class securityController {
+    @GetMapping("/notAuthorized")
+    public String notAuthorized() {
+        return "notAuthorized";
+    }
+    
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+}
+![image](https://github.com/user-attachments/assets/82eea331-489f-4146-9602-837de3e7d545)
+
+
+4. Page d'Accès Refusé
+
+notAuthorized.html
+
+Cette page s'affiche lorsque l'utilisateur tente d'accéder à une ressource sans les droits requis.
+
+Message d'erreur clair.
+
+Utilisation de Thymeleaf Layouts pour un affichage homogène.
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Accès Refusé</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="alert alert-danger m-3">
+        <h1>Not Authorized</h1>
+    </div>
+</div>
+</body>
+</html>
+
+Ce guide couvre la configuration complète de Spring Security avec gestion des utilisateurs, authentification et autorisation.
+
+### 8. **Base de Données H2**
 La base de données H2 est utilisée pour les tests. Elle est configurée dans `application.properties` pour fonctionner en mémoire.
 
 ---
 
-### 8. **Bootstrap pour le Design**
+### 9. **Bootstrap pour le Design**
 Bootstrap est utilisé pour styliser l'interface utilisateur, rendant l'application responsive et moderne.
 
 ---
