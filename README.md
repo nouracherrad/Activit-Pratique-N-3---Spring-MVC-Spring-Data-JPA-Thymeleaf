@@ -239,7 +239,7 @@ Accès libre aux ressources statiques (/webjars/**, H2).
 Authentification requise pour toutes les autres pages.
 
 Redirection vers une page d’accès refusé (/notAuthorized) si l'utilisateur n'a pas les autorisations nécessaires.
-
+```
 package ma.enset.hopital.security;
 
 import org.springframework.context.annotation.Bean;
@@ -286,7 +286,7 @@ public class securityConfig {
         httpSecurity.exceptionHandling().accessDeniedPage("/notAuthorized");
         return httpSecurity.build();
     }
-}
+}```
 
 2. Interface de Connexion
 
@@ -299,7 +299,7 @@ Champs : Nom d'utilisateur et mot de passe.
 Option "Remember me" : Permet de garder la session active.
 
 Bootstrap : Utilisation de la bibliothèque pour une interface responsive.
-
+```
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -337,6 +337,7 @@ Bootstrap : Utilisation de la bibliothèque pour une interface responsive.
 </div>
 </body>
 </html>
+```
 
 3. Gestion des Autorisations
 
@@ -347,7 +348,7 @@ Ce contrôleur gère les pages d'authentification et d'accès refusé.
 /login : Redirige vers la page de connexion.
 
 /notAuthorized : Page affichée en cas de refus d'accès.
-
+```
 package ma.enset.hopital.Web;
 
 import org.springframework.stereotype.Controller;
@@ -364,7 +365,7 @@ public class securityController {
     public String login() {
         return "login";
     }
-}
+}```
 ![image](https://github.com/user-attachments/assets/82eea331-489f-4146-9602-837de3e7d545)
 
 
@@ -377,7 +378,7 @@ Cette page s'affiche lorsque l'utilisateur tente d'accéder à une ressource san
 Message d'erreur clair.
 
 Utilisation de Thymeleaf Layouts pour un affichage homogène.
-
+```
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -395,8 +396,8 @@ Utilisation de Thymeleaf Layouts pour un affichage homogène.
 </div>
 </body>
 </html>
+```
 
-Ce guide couvre la configuration complète de Spring Security avec gestion des utilisateurs, authentification et autorisation.
 
 ### 8. **Base de Données H2**
 La base de données H2 est utilisée pour les tests. Elle est configurée dans `application.properties` pour fonctionner en mémoire.
